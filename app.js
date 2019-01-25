@@ -8,11 +8,16 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
-
-
+// process.on('unhandledRejection', rej => console.warn('全局捕获Rejection', rej));
+// process.on('uncaughtException', function (err) {
+//     //打印出错误
+//     console.log(err);
+//     //打印出错误的调用栈方便调试
+//     console.log(err.stack);
+// });
 //跨域配置
 app.all('*', function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "http://localhost:4201"); //为了跨域保持session，所以指定地址，不能用*
+    res.header("Access-Control-Allow-Origin", "http://localhost:4200"); //为了跨域保持session，所以指定地址，不能用*
     res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     res.header('Access-Control-Allow-Headers', 'Content-Type');
@@ -77,18 +82,21 @@ app.use('/users', usersRouter);
 app.use('/',indexRouter)
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+    res.send('内部错误');
   next(createError(404));
 });
 
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  // res.locals.message = err.message;
+  // res.locals.error = req.app.get('env') === 'development' ? err : {};
+  //
+  // // render the error page
+  // res.status(err.status );
+  // res.render('error');
+    res.status(500);
+    res.send({ error: "myerror" });
 });
 
 module.exports = app;

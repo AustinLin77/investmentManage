@@ -1,6 +1,6 @@
 const http = require('http');
 module.exports=function getIpInfo(ip, cb) {
-    const serverurl = 'http://ip.taobao.com/service/getIpInfo.php?ip=' + ip;
+    const serverurl = 'http://ip.taobao.com/service/getIpInfo.php?ip='+ip;
     http.get(serverurl, function(res) {
         var code = res.statusCode;
         if (code == 200) {

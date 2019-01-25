@@ -12,8 +12,16 @@ router.post('/login', function(req, res, next) {
     var md5 = crypto.createHash('md5');
     var password = md5.update(req.body.password).digest('base64');
     ip=req.body.ip;
+
+    console.log(ip)
     ipHandler(ip,function(err,cbres){
-        console.log(cbres.region_id);
+        console.log(cbres);
+        if(typeof (cbres)=='undefined'){
+            const error = new Error('missing cbs')
+            error.httpStatusCode = 400
+            return next(error)
+        }
+        // console.log(cbres.region_id);
         address=cbres.country+cbres.region+cbres.city;
         isp=cbres.isp;
         regionId=cbres.region_id;
@@ -31,10 +39,10 @@ router.post('/login', function(req, res, next) {
                     req.session.username = req.body.username; //存session
                     req.session.password = password;
                     console.log(cbres.city_id);
-                    res.end('{"success":"true","statusText":"登录成功"}');
+                    res.send('{"success":"true","statusText":"登录成功"}');
                 })
             }else if(data[0].passWord !== password){
-                res.end('{"err":"密码不正确"}');
+                res.send('{"err":"密码不正确"}');
             }else if(data.length!==0&&data[0].passWord===password){
                 console.log(data)
                 req.session.username = req.body.username; //存session
@@ -367,5 +375,28 @@ router.post('/deletePayEvidence', function(req, res, next) {
     }
 
 
+});
+//获取省份投资信息
+router.get('/findProvinceInvestmentList', function(req, res, next) {
+    req.route.path ='/show';
+    handler(req, res, "chinaTouziList", {}, function (data) {
+        if(data.length>0){
+            res.send({success:"true",statusText:"获取成功",data:data})
+        }else{
+            res.send({success:"false",statusText:"获取失败,无该用户数据"})
+        }
+    })
+});
+//获取区域投资信息
+router.get('/findAreaInvestmentList', function(req, res, next) {
+    req.route.path ='/show';
+    var selector={area: req.body.area}
+    handler(req, res, "areaInvestment", selector, function (data) {
+        if(data.length>0){
+            res.send({success:"true",statusText:"获取成功",data:data})
+        }else{
+            res.send({success:"false",statusText:"获取失败,无该用户数据"})
+        }
+    })
 });
 module.exports = router;
