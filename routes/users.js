@@ -15,7 +15,7 @@ router.post('/login', function(req, res, next) {
 
     console.log(ip)
     ipHandler(ip,function(err,cbres){
-        console.log(cbres);
+        console.log("333");
         if(typeof (cbres)=='undefined'){
             const error = new Error('missing cbs')
             error.httpStatusCode = 400
